@@ -59,8 +59,8 @@ func GrpcPeerHost(ctx context.Context) string {
 	return host
 }
 
-// GrpcPeerID extracts client's ID from grpc context.
-func GrpcPeerID(ctx context.Context) hash.Peer {
+// GrpcClientID extracts client's ID from grpc context.
+func GrpcClientID(ctx context.Context) hash.Peer {
 	id, ok := ctx.Value(peerID{}).(hash.Peer)
 	if !ok {
 		panic("gRPC-peer ID is undefined")
@@ -69,4 +69,11 @@ func GrpcPeerID(ctx context.Context) hash.Peer {
 	return id
 }
 
-// TODO: GrpcPeerID() analog for client-side
+// GrpcServerID extracts server's ID from connsID by address.
+func GrpcServerID(addr string) hash.Peer {
+	if addr == "" || connsID[addr] == hash.EmptyPeer {
+		panic("gRPC-peer ID is undefined")
+	}
+
+	return connsID[addr]
+}

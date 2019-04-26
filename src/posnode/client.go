@@ -140,6 +140,7 @@ func (cc *connPool) Clean() {
 	for _, c := range old {
 		if cached := cc.cache[c.addr]; c == cached {
 			delete(cc.cache, c.addr)
+			delete(api.ConnsID(), c.addr)
 		}
 	}
 }
@@ -168,7 +169,7 @@ type byCreation []*connection
 
 func (s byCreation) Len() int { return len(s) }
 
-func (s byCreation) Swap(i, j int) { s[i], s[j] = s[i], s[j] }
+func (s byCreation) Swap(i, j int) { s[i], s[j] = s[j], s[i] }
 
 func (s byCreation) Less(i, j int) bool {
 	return s[i].created.Before(s[j].created)

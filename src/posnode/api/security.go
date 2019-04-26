@@ -17,6 +17,10 @@ import (
 	"github.com/Fantom-foundation/go-lachesis/src/hash"
 )
 
+// Temp map for store servers ID by connection address.
+// Clean the map with pool connections.
+var connsID = map[string]hash.Peer{}
+
 // ClientAuth makes client-side interceptor for identification.
 func ClientAuth(key *common.PrivateKey) grpc.UnaryClientInterceptor {
 	pub := key.Public().Base64()
@@ -46,6 +50,8 @@ func ClientAuth(key *common.PrivateKey) grpc.UnaryClientInterceptor {
 		if err != nil {
 			return status.Errorf(codes.Unauthenticated, err.Error())
 		}
+
+		connsID[cc.Target()] = hash.PeerOfPubkey(pub)
 
 		return nil
 	}
@@ -137,7 +143,7 @@ func verifyData(data interface{}, sign string, pub *common.PublicKey) error {
 	}
 
 	if !pub.Verify(h.Bytes(), r, s) {
-		errors.New("invalid signature")
+		return errors.New("invalid signature")
 	}
 
 	return nil
@@ -168,4 +174,9 @@ func isProtoEmpty(m *proto.Message) bool {
 	// Saves ~25ns over the equivalent:
 	// return valToPointer(reflect.ValueOf(*m))
 	return (*[2]unsafe.Pointer)(unsafe.Pointer(m))[1] == nil
+}
+
+// ConnsID return map of server conns IDs
+func ConnsID() map[string]hash.Peer {
+	return connsID
 }
