@@ -7,6 +7,7 @@ package app
 import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/hashicorp/golang-lru"
 
 	"github.com/Fantom-foundation/go-lachesis/inter/idx"
 )
@@ -70,4 +71,8 @@ func (s *Store) GetReceipts(n idx.Block) types.Receipts {
 		receipts[i].GasUsed = r.GasUsed
 	}
 	return receipts
+}
+
+func (s *Store) GetReceiptsCache() *lru.Cache {
+	return s.cache.Receipts
 }

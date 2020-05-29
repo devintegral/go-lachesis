@@ -19,9 +19,12 @@ func main() {
 	}
 
 	p := leveldb.NewProducer(dir)
-	db := p.OpenDb("gossip-main")
-	defer db.Close()
+	/*
+		db := p.OpenDb("gossip-main")
+		defer db.Close()
+		//checkPacks(db)
+		//checkEvents(db)
+	*/
 
-	//checkPacks(db)
-	checkEvents(db)
+	checkReceipts(p)
 }
